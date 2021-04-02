@@ -47,14 +47,30 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
+  int flag = 1;
 
-  void _incrementCounter() {
+  void _counterState(){
     setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
+      if(_counter == 0 && flag == 1){
+        _counter = 0;
+        flag = 1;
+      }else if(flag < _counter){
+        _counter--;
+        flag--;
+      }else{
+        _counter++;
+      }
+    });
+  }
+
+  void _decrementCounter() {
+    setState(() {
+      _counter == 0 ? _counter = 0 : _counter--;
+    });
+  }
+
+  void _incrementCounter(){
+    setState(() {
       _counter++;
     });
   }
@@ -100,14 +116,27 @@ class _MyHomePageState extends State<MyHomePage> {
               '$_counter',
               style: Theme.of(context).textTheme.headline4,
             ),
+            Row(
+              // crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                FloatingActionButton(
+                  onPressed: _decrementCounter,
+                  tooltip: 'Decrement',
+                  child: Icon(Icons.remove),
+                ),
+                SizedBox(width: 10.0,),
+                FloatingActionButton(
+                  onPressed: _incrementCounter,
+                  tooltip: 'Increment',
+                  child: Icon(Icons.add),
+                ),
+              ],
+            ),
+
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }

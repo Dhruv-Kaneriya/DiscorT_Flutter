@@ -1,4 +1,8 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
+import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 
 void main() {
   runApp(MyApp());
@@ -30,6 +34,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final myController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  DateTime date2;
   @override
   void dispose() {
     myController.dispose();
@@ -39,19 +44,34 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        elevation: 5,
+        backgroundColor: Colors.red,
+        title: Text(widget.title),
+        centerTitle: true,
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: TextFormField(
-            controller: myController,
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Please enter some Text';
-              }
-              return null;
-            },
-          ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            DateField(),
+            BasicDateTimeField(),
+            Form(
+              key: _formKey,
+              child: TextFormField(
+                decoration: InputDecoration(hintText: "Enter Number"),
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                controller: myController,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter some Number';
+                  }
+                  return null;
+                },
+              ),
+            ),
+          ],
         ),
         // child: TextField(
         //   controller: myController,
@@ -88,6 +108,52 @@ class _MyHomePageState extends State<MyHomePage> {
         tooltip: 'Show me the value!',
         child: Icon(Icons.text_fields),
       ),
+    );
+  }
+}
+
+class DateField extends StatelessWidget {
+  final format = DateFormat("dd-MM-yyyy");
+  @override
+  Widget build(BuildContext context) {
+    return DateTimeField(
+      format: format,
+      decoration: InputDecoration(hintText: "Enter Date"),
+      onShowPicker: (context, currentValue) {
+        return showDatePicker(
+            context: context,
+            firstDate: DateTime.now(),
+            initialDate: currentValue ?? DateTime.now(),
+            lastDate: DateTime(2100));
+      },
+    );
+  }
+}
+
+class BasicDateTimeField extends StatelessWidget {
+  final format = DateFormat("yyyy-MM-dd HH:mm");
+  @override
+  Widget build(BuildContext context) {
+    return DateTimeField(
+      format: format,
+      decoration: InputDecoration(hintText: "Enter Date & Time"),
+      onShowPicker: (context, currentValue) async {
+        final date = await showDatePicker(
+            context: context,
+            firstDate: DateTime.now(),
+            initialDate: currentValue ?? DateTime.now(),
+            lastDate: DateTime(2100));
+        if (date != null) {
+          final time = await showTimePicker(
+            context: context,
+            initialTime:
+            TimeOfDay.fromDateTime(currentValue ?? DateTime.now()),
+          );
+          return DateTimeField.combine(date, time);
+        } else {
+          return currentValue;
+        }
+      },
     );
   }
 }

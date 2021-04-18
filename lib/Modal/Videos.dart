@@ -14,8 +14,7 @@ class _VideoScreenState extends State<VideoScreen> {
   @override
   void initState() {
     super.initState();
-    _controller = VideoPlayerController.network(
-        'https://www.sample-videos.com/video123/mp4/720/big_buck_bunny_720p_20mb.mp4');
+    _controller = VideoPlayerController.asset('assets/Videos/homepage.mp4');
     _initializeVideoPlayerFuture = _controller.initialize();
     _controller.setVolume(0.0);
     _controller.setLooping(true);
